@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Salon360App.Data;
 using Salon360App.Enums;
 using Salon360App.Models;
@@ -450,8 +451,11 @@ namespace Salon360App.Controllers
         public async Task<IActionResult> RegisterStaff()
         {
             var staffRoles = await _staffRoleService.GetAllAsync();
-            ViewBag.StaffRoles = staffRoles;
-            return View();
+            var model = new RegisterStaffViewModel
+            {
+                AvailableRoles = staffRoles
+            };
+            return View(model);
         }
 
         [HttpPost]
@@ -459,8 +463,53 @@ namespace Salon360App.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RegisterStaff(RegisterStaffViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+                return await RedisplayForm(model);
+
+            // Validate StaffRole exists
+            var staffRole = await _staffRoleService.GetByIdAsync(model.StaffRoleId);
+            if (staffRole == null)
             {
+                ModelState.AddModelError("StaffRoleId", "Selected role does not exist");
+                return await RedisplayForm(model);
+            }
+
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                // Handle profile image upload
+                string profileImageUrl = null;
+                if (model.ProfileImage != null && model.ProfileImage.Length > 0)
+                {
+                    if (model.ProfileImage.Length > 5 * 1024 * 1024) // 5MB limit
+                    {
+                        ModelState.AddModelError("ProfileImage", "Image size cannot exceed 5MB");
+                        return await RedisplayForm(model);
+                    }
+
+                    var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+                    var fileExtension = Path.GetExtension(model.ProfileImage.FileName).ToLowerInvariant();
+                    if (!allowedExtensions.Contains(fileExtension))
+                    {
+                        ModelState.AddModelError("ProfileImage", "Only JPG, JPEG, PNG, and GIF files are allowed");
+                        return await RedisplayForm(model);
+                    }
+
+                    var fileName = $"{Guid.NewGuid()}{fileExtension}";
+                    var uploadPath = Path.Combine(_env.WebRootPath, "uploads");
+
+                    if (!Directory.Exists(uploadPath))
+                        Directory.CreateDirectory(uploadPath);
+
+                    var filePath = Path.Combine(uploadPath, fileName);
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await model.ProfileImage.CopyToAsync(stream);
+                    }
+                    profileImageUrl = $"/uploads/{fileName}";
+                }
+
+                // Create user
                 var user = new User
                 {
                     UserName = model.Email,
@@ -470,60 +519,64 @@ namespace Salon360App.Controllers
                     Gender = model.Gender,
                     DateOfBirth = model.DateOfBirth,
                     Address = model.Address,
-                    ProfileImageUrl = model.ProfileImageUrl,
-                    UserType = UserType.Staff
-
-
+                    ProfileImageUrl = profileImageUrl,
+                    UserType = UserType.Staff,
+                    RegisteredAt = DateTime.UtcNow,
+                    EmailConfirmed = true
                 };
 
-                var existingUser = await _userManager.FindByEmailAsync(model.Email);
-                if (existingUser != null)
-                {
-                    ModelState.AddModelError("", "Email is already in use.");
-                    return View(model);
-                }
-
                 var result = await _userManager.CreateAsync(user, model.Password);
-
-                if (result.Succeeded)
+                if (!result.Succeeded)
                 {
-                    var currentUser = await _userManager.GetUserAsync(User);
-
-                    var staff = new Staff
-                    {
-                        UserId = user.Id,
-                        StaffRoleId = model.StaffRoleId,
-                        Bio = model.Bio
-                    };
-
-                    EntryHelper.SetCreatedAudit(staff, currentUser.Id);
-
-                    if (!await _roleManager.RoleExistsAsync("Staff"))
-                    {
-                        ModelState.AddModelError("", "Staff role does not exist.");
-                        return await RedisplayForm(model);
-                    }
-
-                    await _userManager.AddToRoleAsync(user, "Staff");
-
-                    await _staffService.CreateAsync(staff);
-                    _logger.LogInformation("Staff user {Email} created by {AdminId}", user.Email, currentUser.Id);
-
-                    return RedirectToAction("Index", "Staff");
+                    AddErrors(result);
+                    await transaction.RollbackAsync();
+                    return await RedisplayForm(model);
                 }
 
-                AddErrors(result);
-            }
+                // Add to Staff role
+                if (!await _roleManager.RoleExistsAsync("Staff"))
+                {
+                    await _roleManager.CreateAsync(new IdentityRole<int>("Staff"));
+                }
+                await _userManager.AddToRoleAsync(user, "Staff");
 
-            return await RedisplayForm(model);
+                // Create staff record
+                var staff = new Staff
+                {
+                    UserId = user.Id,
+                    StaffRoleId = model.StaffRoleId,
+                    Bio = model.Bio,
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                if (!await _staffService.CreateAsync(staff))
+                {
+                    ModelState.AddModelError("", "Failed to create staff record");
+                    await transaction.RollbackAsync();
+                    return await RedisplayForm(model);
+                }
+
+                await transaction.CommitAsync();
+                _logger.LogInformation("Staff member {Email} registered successfully", model.Email);
+                TempData["Success"] = "Staff member registered successfully";
+                return RedirectToAction("Index", "Staff");
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                _logger.LogError(ex, "Error registering staff member {Email}", model.Email);
+                ModelState.AddModelError("", "An error occurred while registering the staff member");
+                return await RedisplayForm(model);
+            }
         }
 
         private async Task<IActionResult> RedisplayForm(RegisterStaffViewModel model)
         {
-            model.AvailableRoles = await _staffRoleService.GetAllAsync();
-            return View("RegisterStaff", model);
+            var staffRoles = await _staffRoleService.GetAllAsync();
+            model.AvailableRoles = staffRoles;
+            return View(model);
         }
-
 
         private void AddErrors(IdentityResult result)
         {
@@ -533,8 +586,5 @@ namespace Salon360App.Controllers
                 _logger.LogWarning("Identity error: {Error}", error.Description); // if logger is available
             }
         }
-
-
-
     }
 }

@@ -5,86 +5,164 @@
     ViewData["Title"] = "Register Staff";
 }
 
-<div class="row">
-    <div class="col-md-6 offset-md-3">
-        <h2>@ViewData["Title"]</h2>
-        <form asp-action="RegisterStaff" method="post" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            
-            <div class="form-group">
-                <label asp-for="Email"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 rounded-lg">
+                <div class="card-header">
+                    <h3 class="text-center font-weight-light my-4">@ViewData["Title"]</h3>
+                </div>
+                <div class="card-body">
+                    <form asp-action="RegisterStaff" method="post" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <div class="form-group">
-                <label asp-for="Password"></label>
-                <input asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
+                        <ul class="nav nav-tabs mb-3" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="personal-tab" data-bs-toggle="tab"
+                                    data-bs-target="#personal" type="button" role="tab"
+                                    aria-selected="true">Personal</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="account-tab" data-bs-toggle="tab" data-bs-target="#account"
+                                    type="button" role="tab" aria-selected="false">Account</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="professional-tab" data-bs-toggle="tab"
+                                    data-bs-target="#professional" type="button" role="tab"
+                                    aria-selected="false">Professional</button>
+                            </li>
+                        </ul>
 
-            <div class="form-group">
-                <label asp-for="ConfirmPassword"></label>
-                <input asp-for="ConfirmPassword" class="form-control" />
-                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-            </div>
+                        <div class="tab-content">
+                            <!-- Personal Information Tab -->
+                            <div class="tab-pane fade show active" id="personal" role="tabpanel">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-2">
+                                            <input asp-for="Firstname" class="form-control" placeholder="First Name" />
+                                            <label asp-for="Firstname">First Name</label>
+                                            <span asp-validation-for="Firstname" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-2">
+                                            <input asp-for="Lastname" class="form-control" placeholder="Last Name" />
+                                            <label asp-for="Lastname">Last Name</label>
+                                            <span asp-validation-for="Lastname" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
 
-            <div class="form-group">
-                <label asp-for="Firstname"></label>
-                <input asp-for="Firstname" class="form-control" />
-                <span asp-validation-for="Firstname" class="text-danger"></span>
-            </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-2">
+                                            <select asp-for="Gender" asp-items="Html.GetEnumSelectList<Gender>()"
+                                                class="form-select">
+                                                <option value="">Select</option>
+                                            </select>
+                                            <label asp-for="Gender">Gender</label>
+                                            <span asp-validation-for="Gender" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-2">
+                                            <input asp-for="DateOfBirth" class="form-control" type="date" />
+                                            <label asp-for="DateOfBirth">Date of Birth</label>
+                                            <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
 
-            <div class="form-group">
-                <label asp-for="Lastname"></label>
-                <input asp-for="Lastname" class="form-control" />
-                <span asp-validation-for="Lastname" class="text-danger"></span>
-            </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-2">
+                                            <input asp-for="Address" class="form-control" placeholder="Address" />
+                                            <label asp-for="Address">Address</label>
+                                            <span asp-validation-for="Address" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-2">
+                                            <input asp-for="ProfileImage" class="form-control" type="file"
+                                                accept="image/*" />
+                                            <label asp-for="ProfileImage">Profile Image</label>
+                                            <span asp-validation-for="ProfileImage" class="text-danger"></span>
+                                            <small class="form-text text-muted">Maximum file size: 5MB. Allowed formats:
+                                                JPG,
+                                                JPEG, PNG, GIF</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-            <div class="form-group">
-                <label asp-for="Gender"></label>
-                <select asp-for="Gender" asp-items="Html.GetEnumSelectList<Gender>()" class="form-control">
-                    <option value="">-- Select Gender --</option>
-                </select>
-                <span asp-validation-for="Gender" class="text-danger"></span>
-            </div>
+                            <!-- Account Information Tab -->
+                            <div class="tab-pane fade" id="account" role="tabpanel">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-2">
+                                            <input asp-for="Email" class="form-control" placeholder="Email" />
+                                            <label asp-for="Email">Email</label>
+                                            <span asp-validation-for="Email" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
 
-            <div class="form-group">
-                <label asp-for="DateOfBirth"></label>
-                <input asp-for="DateOfBirth" class="form-control" type="date" />
-                <span asp-validation-for="DateOfBirth" class="text-danger"></span>
-            </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-2">
+                                            <input asp-for="Password" class="form-control" placeholder="Password" />
+                                            <label asp-for="Password">Password</label>
+                                            <span asp-validation-for="Password" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-2">
+                                            <input asp-for="ConfirmPassword" class="form-control"
+                                                placeholder="Confirm Password" />
+                                            <label asp-for="ConfirmPassword">Confirm Password</label>
+                                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-            <div class="form-group">
-                <label asp-for="Address"></label>
-                <input asp-for="Address" class="form-control" />
-                <span asp-validation-for="Address" class="text-danger"></span>
-            </div>
+                            <!-- Professional Information Tab -->
+                            <div class="tab-pane fade" id="professional" role="tabpanel">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-2">
+                                            <select asp-for="StaffRoleId"
+                                                asp-items="@(new SelectList(Model.AvailableRoles, "StaffRoleId", "Name"))"
+                                                class="form-select">
+                                                <option value="">Select</option>
+                                            </select>
+                                            <label asp-for="StaffRoleId">Staff Role</label>
+                                            <span asp-validation-for="StaffRoleId" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
 
-            <div class="form-group">
-                <label asp-for="ProfileImageUrl"></label>
-                <input asp-for="ProfileImageUrl" class="form-control" type="file" accept="image/*" />
-                <span asp-validation-for="ProfileImageUrl" class="text-danger"></span>
-            </div>
+                                <div class="col-12">
+                                    <div class="form-floating mb-2">
+                                        <textarea asp-for="Bio" class="form-control" placeholder="Bio"
+                                            style="height: 100px"></textarea>
+                                        <label asp-for="Bio">Professional Bio</label>
+                                        <span asp-validation-for="Bio" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-            <div class="form-group">
-                <label asp-for="StaffRoleId"></label>
-                <select asp-for="StaffRoleId" asp-items="@(new SelectList(ViewBag.StaffRoles, "Id", "Name"))" class="form-control">
-                    <option value="">-- Select Role --</option>
-                </select>
-                <span asp-validation-for="StaffRoleId" class="text-danger"></span>
+                        <div class="d-flex align-items-center justify-content-between mt-4 mb-3">
+                            <button type="button" class="btn btn-secondary" id="prevBtn">Previous</button>
+                            <button type="button" class="btn btn-primary" id="nextBtn">Next</button>
+                            <button type="submit" class="btn btn-success" id="submitBtn"
+                                style="display: none;">Register</button>
+                        </div>
+                    </form>
+                </div>
             </div>
-
-            <div class="form-group">
-                <label asp-for="Bio"></label>
-                <textarea asp-for="Bio" class="form-control"></textarea>
-                <span asp-validation-for="Bio" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary">Register</button>
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
@@ -92,4 +170,43 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script>
+        $(function () {
+            // Tab navigation with buttons
+            const tabs = ['personal', 'account', 'professional'];
+            let currentTab = 0;
+
+            function updateButtons() {
+                $("#prevBtn").toggle(currentTab > 0);
+                $("#nextBtn").toggle(currentTab < tabs.length - 1);
+                $("#submitBtn").toggle(currentTab === tabs.length - 1);
+            }
+
+            function showTab(index) {
+                $(`#${tabs[currentTab]}-tab`).removeClass('active');
+                $(`#${tabs[index]}-tab`).addClass('active');
+                $(`#${tabs[currentTab]}`).removeClass('show active');
+                $(`#${tabs[index]}`).addClass('show active');
+                currentTab = index;
+                updateButtons();
+            }
+
+            $("#nextBtn").click(function () {
+                if (currentTab < tabs.length - 1) {
+                    currentTab++;
+                    showTab(currentTab);
+                }
+            });
+
+            $("#prevBtn").click(function () {
+                if (currentTab > 0) {
+                    currentTab--;
+                    showTab(currentTab);
+                }
+            });
+
+            // Initialize
+            updateButtons();
+        });
+    </script>
 }

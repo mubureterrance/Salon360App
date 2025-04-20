@@ -1,6 +1,7 @@
 ﻿using Salon360App.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Salon360App.Models
 {
@@ -18,14 +19,15 @@ namespace Salon360App.Models
 
         public decimal? BaseRate { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<Staff> Staffs { get; set; } = new List<Staff>();
 
         [StringLength(50)]
-        public string? Code { get; set; } // Optional safe enum mapping
+        public string? Code { get; set; }
 
         [NotMapped]
+        [JsonIgnore]
         public DefaultStaffRole? StaffRoleEnum =>
             Enum.TryParse<DefaultStaffRole>(Code, out var role) ? role : (DefaultStaffRole?)null;
     }
-
 }

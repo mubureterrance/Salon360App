@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 using Salon360App.Enums;
 using Salon360App.Models;
 
@@ -41,16 +42,17 @@ namespace Salon360App.ViewModels.AccountViewModels
         [Display(Name = "Address")]
         public string Address { get; set; }
 
-        [Display(Name = "Profile Image URL")]
-        public string ProfileImageUrl { get; set; }
+        [Display(Name = "Profile Image")]
+        public IFormFile ProfileImage { get; set; }
 
         [Required]
         [Display(Name = "Staff Role")]
         public int StaffRoleId { get; set; }
 
         [Display(Name = "Bio")]
+        [StringLength(500, ErrorMessage = "Bio cannot exceed 500 characters.")]
         public string Bio { get; set; }
 
-        public IEnumerable<StaffRole> AvailableRoles { get; set; } = new List<StaffRole>();
+        public IEnumerable<StaffRole> AvailableRoles { get; set; }
     }
 }

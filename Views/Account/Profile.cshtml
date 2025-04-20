@@ -6,12 +6,13 @@
 
 <div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card shadow-sm border-0">
+        <div class="col-lg-10">
+            <div class="card shadow border-0 rounded-4">
                 <div class="card-header bg-white border-bottom-0 py-4">
                     <div class="d-flex justify-content-between align-items-center">
-                        <h1 class="h4 mb-0">Profile Settings</h1>
-                        <div class="badge bg-light text-dark">
+                        <h1 class="h3 mb-0 fw-semibold text-gradient">Profile Settings</h1>
+                        <div class="badge bg-light text-dark rounded-pill px-3 py-2 border">
+                            <i class="bi bi-person-badge-fill me-1"></i>
                             @Model.UserType.ToString()
                             @if (Model.UserType == Salon360App.Enums.UserType.Customer)
                             {
@@ -25,82 +26,153 @@
                     </div>
                 </div>
 
-                <div class="card-body">
-                    <form asp-action="UpdateProfile" asp-controller="Account" enctype="multipart/form-data" method="post" class="needs-validation" novalidate>
-                        <!-- Profile Picture Section -->
-                        <div class="text-center mb-5">
-                            <div class="position-relative d-inline-block">
-                                <img id="profilePreview" src="@(Model.ProfileImageUrl ?? "/images/default-user.png")"
-                                     class="rounded-circle shadow object-fit-cover" width="150" height="150"
-                                     alt="Profile picture" style="border: 3px solid #f8f9fa;">
-                                <label for="ProfileImageUpload" class="btn btn-sm btn-primary rounded-circle position-absolute bottom-0 end-0 mb-1 me-1"
-                                       style="width: 40px; height: 40px; line-height: 40px;"
-                                       data-bs-toggle="tooltip" title="Change photo">
-                                    <i class="bi bi-camera-fill"></i>
-                                    <input type="file" id="ProfileImageUpload" name="ProfileImage" accept="image/*" class="d-none">
-                                </label>
-                            </div>
+                <div class="card-body p-lg-5">
+                    <form asp-action="UpdateProfile" asp-controller="Account" enctype="multipart/form-data"
+                          method="post" class="needs-validation" novalidate>
+
+                        <!-- Progress indicator -->
+                        <div class="progress mb-5 bg-light" style="height: 6px;" role="progressbar"
+                             aria-label="Profile completion" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                            <div id="formProgress" class="progress-bar bg-gradient"></div>
                         </div>
 
-                        <!-- Personal Information Section -->
-                        <div class="mb-4">
-                            <h3 class="h5 mb-3 text-primary">
-                                <i class="bi bi-person-badge me-2"></i>Personal Information
-                            </h3>
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label asp-for="Firstname" class="form-label">First Name</label>
-                                    <input asp-for="Firstname" class="form-control" required>
-                                    <span asp-validation-for="Firstname" class="invalid-feedback"></span>
+                        <!-- Profile Picture Section -->
+                        <div class="text-center mb-5">
+                            <div class="profile-picture-container mx-auto position-relative d-inline-block">
+                                <div class="profile-picture-wrapper">
+                                    <img id="profilePreview" src="@(Model.ProfileImageUrl ?? "/images/default-user.png")"
+                                         class="rounded-circle shadow object-fit-cover" alt="Profile picture">
+                                    <div class="profile-picture-overlay">
+                                        <i class="bi bi-camera-fill fs-4"></i>
+                                    </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <label asp-for="Lastname" class="form-label">Last Name</label>
-                                    <input asp-for="Lastname" class="form-control" required>
-                                    <span asp-validation-for="Lastname" class="invalid-feedback"></span>
+                                <label for="ProfileImageUpload" class="btn btn-sm btn-primary rounded-circle position-absolute bottom-0 end-0 mb-1 me-1 profile-upload-btn"
+                                       data-bs-toggle="tooltip" title="Change photo">
+                                    <i class="bi bi-camera-fill"></i>
+                                    <input type="file" id="ProfileImageUpload" name="ProfileImage" accept="image/*" class="d-none"
+                                           aria-label="Upload profile picture">
+                                </label>
+                            </div>
+                            <p id="imageUploadStatus" class="text-muted mt-2 small"></p>
+                        </div>
+
+                        <div class="row">
+                            <!-- Left column -->
+                            <div class="col-lg-6 pe-lg-4">
+                                <!-- Personal Information Section -->
+                                <div class="mb-4 p-4 bg-light bg-opacity-50 rounded-4">
+                                    <h3 class="h5 mb-4 text-primary d-flex align-items-center">
+                                        <i class="bi bi-person-badge me-2"></i>
+                                        Personal Information
+                                    </h3>
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <div class="form-floating mb-3">
+                                                <input asp-for="Firstname" class="form-control" id="floatingFirstName" placeholder="First Name" required>
+                                                <label asp-for="Firstname" for="floatingFirstName">First Name</label>
+                                                <div class="invalid-feedback">
+                                                    Please provide your first name.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-floating mb-3">
+                                                <input asp-for="Lastname" class="form-control" id="floatingLastName" placeholder="Last Name" required>
+                                                <label asp-for="Lastname" for="floatingLastName">Last Name</label>
+                                                <div class="invalid-feedback">
+                                                    Please provide your last name.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="form-floating mb-3">
+                                                <input asp-for="Email" class="form-control readonly-field" id="floatingEmail" placeholder="Email" readonly>
+                                                <label asp-for="Email" for="floatingEmail">Email</label>
+                                                <small class="text-muted d-block mt-2">
+                                                    <i class="bi bi-info-circle me-1"></i>
+                                                    Contact support to change your email
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <label asp-for="Email" class="form-label">Email</label>
-                                    <input asp-for="Email" class="form-control" readonly>
-                                    <small class="text-muted">Contact support to change your email</small>
-                                </div>
-                                <div class="col-md-6">
-                                    <label asp-for="DateOfBirth" class="form-label">Date of Birth</label>
-                                    <input asp-for="DateOfBirth" type="date" class="form-control">
-                                    <span asp-validation-for="DateOfBirth" class="invalid-feedback"></span>
-                                </div>
-                                <div class="col-12">
-                                    <label asp-for="Address" class="form-label">Address</label>
-                                    <input asp-for="Address" class="form-control">
-                                    <span asp-validation-for="Address" class="invalid-feedback"></span>
-                                </div>
-                                <div class="col-md-6">
-                                    <label asp-for="Gender" class="form-label">Gender</label>
-                                    <select asp-for="Gender" class="form-select" asp-items="Html.GetEnumSelectList<Salon360App.Enums.Gender>()">
-                                        <option value="">Select gender</option>
-                                    </select>
-                                    <span asp-validation-for="Gender" class="invalid-feedback"></span>
+                            </div>
+
+                            <!-- Right column -->
+                            <div class="col-lg-6 ps-lg-4">
+                                <!-- Additional Information Section -->
+                                <div class="mb-4 p-4 bg-light bg-opacity-50 rounded-4">
+                                    <h3 class="h5 mb-4 text-primary d-flex align-items-center">
+                                        <i class="bi bi-person-lines-fill me-2"></i>
+                                        Additional Information
+                                    </h3>
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label asp-for="DateOfBirth" class="form-label">Date of Birth</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="bi bi-calendar3"></i></span>
+                                                <input asp-for="DateOfBirth" type="date" class="form-control">
+                                            </div>
+                                            <span asp-validation-for="DateOfBirth" class="invalid-feedback"></span>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label asp-for="Gender" class="form-label">Gender</label>
+                                            <select asp-for="Gender" class="form-select"
+                                                    asp-items="Html.GetEnumSelectList<Salon360App.Enums.Gender>()">
+                                                <option value="">Select gender</option>
+                                            </select>
+                                            <span asp-validation-for="Gender" class="invalid-feedback"></span>
+                                        </div>
+                                        <div class="col-12">
+                                            <label asp-for="Address" class="form-label">Address</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+                                                <input asp-for="Address" class="form-control">
+                                            </div>
+                                            <span asp-validation-for="Address" class="invalid-feedback"></span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Account Type Section -->
-                        <div class="mb-4">
-                            <h3 class="h5 mb-3 text-primary">
-                                <i class="bi bi-person-gear me-2"></i>Account Type
+                        <div class="mb-4 p-4 bg-light bg-opacity-50 rounded-4">
+                            <h3 class="h5 mb-4 text-primary d-flex align-items-center">
+                                <i class="bi bi-person-gear me-2"></i>
+                                Account Type
                             </h3>
-                            <div class="row g-3">
+                            <div class="row">
                                 @if (Model.UserType == Salon360App.Enums.UserType.Customer)
                                 {
                                     <div class="col-md-6">
-                                        <label class="form-label">Customer Type</label>
-                                        <input class="form-control" value="@Model.CustomerTypeName" readonly>
+                                        <div class="account-type-card p-3 border rounded-3 mb-3">
+                                            <div class="d-flex align-items-center">
+                                                <div class="account-type-icon me-3 bg-primary bg-opacity-10 p-3 rounded-circle text-primary">
+                                                    <i class="bi bi-person"></i>
+                                                </div>
+                                                <div>
+                                                    <label class="form-label mb-0 fw-medium">Customer Type</label>
+                                                    <p class="mb-0">@Model.CustomerTypeName</p>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 }
                                 else if (Model.UserType == Salon360App.Enums.UserType.Staff)
                                 {
                                     <div class="col-md-6">
-                                        <label class="form-label">Staff Role</label>
-                                        <input class="form-control" value="@Model.StaffRoleName" readonly>
+                                        <div class="account-type-card p-3 border rounded-3 mb-3">
+                                            <div class="d-flex align-items-center">
+                                                <div class="account-type-icon me-3 bg-info bg-opacity-10 p-3 rounded-circle text-info">
+                                                    <i class="bi bi-scissors"></i>
+                                                </div>
+                                                <div>
+                                                    <label class="form-label mb-0 fw-medium">Staff Role</label>
+                                                    <p class="mb-0">@Model.StaffRoleName</p>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 }
                             </div>
@@ -108,11 +180,12 @@
 
                         <!-- Form Actions -->
                         <div class="d-flex justify-content-between mt-5">
-                            <a asp-action="Index" asp-controller="Home" class="btn btn-outline-secondary">
+                            <a asp-action="Index" asp-controller="Home" class="btn btn-outline-secondary btn-lg">
                                 <i class="bi bi-arrow-left me-1"></i> Cancel
                             </a>
-                            <button type="submit" class="btn btn-primary px-4">
-                                <i class="bi bi-save me-1"></i> Save Changes
+                            <button type="submit" class="btn btn-primary btn-lg px-4 save-button">
+                                <span class="save-text"><i class="bi bi-save me-1"></i> Save Changes</span>
+                                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                             </button>
                         </div>
                     </form>
@@ -124,75 +197,329 @@
 
 @section Styles {
     <style>
-        .card {
-            border-radius: 0.75rem;
-            overflow: hidden;
+        /* Gradient text */
+        .text-gradient {
+            background: linear-gradient(90deg, #4776E6 0%, #8E54E9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
         }
 
-        .form-control, .form-select {
-            padding: 0.5rem 0.75rem;
+        /* Gradient backgrounds */
+        .bg-gradient {
+            background: linear-gradient(90deg, #4776E6 0%, #8E54E9 100%);
+        }
+
+        .card {
+            border-radius: 1rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Form controls */
+        .form-control, .form-select, .form-floating > .form-control {
+            padding: 0.75rem 1rem;
             border-radius: 0.5rem;
             border: 1px solid #dee2e6;
+            transition: all 0.2s ease-in-out;
         }
 
-        .form-control:focus, .form-select:focus {
-            border-color: #86b7fe;
-            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+            .form-control:focus, .form-select:focus {
+                border-color: #8E54E9;
+                box-shadow: 0 0 0 0.25rem rgba(142, 84, 233, 0.25);
+                transform: translateY(-2px);
+            }
+
+        .readonly-field {
+            background-color: #f8f9fa;
+            opacity: 0.8;
+            cursor: not-allowed;
         }
 
-        .invalid-feedback {
-            font-size: 0.85rem;
+        /* Profile picture */
+        .profile-picture-container {
+            width: 180px;
+            height: 180px;
+            transition: all 0.3s ease;
         }
 
-        .object-fit-cover {
-            object-fit: cover;
+        .profile-picture-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            border-radius: 50%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            border: 3px solid white;
+        }
+
+            .profile-picture-wrapper img {
+                width: 100%;
+                height: 100%;
+                transition: all 0.3s ease;
+            }
+
+        .profile-picture-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .profile-picture-wrapper:hover .profile-picture-overlay {
+            opacity: 1;
+        }
+
+        .profile-picture-wrapper:hover img {
+            transform: scale(1.05);
+        }
+
+        .profile-upload-btn {
+            width: 45px;
+            height: 45px;
+            line-height: 45px;
+            transition: all 0.3s ease;
+        }
+
+            .profile-upload-btn:hover {
+                transform: scale(1.1);
+            }
+
+        /* Account type cards */
+        .account-type-card {
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+            .account-type-card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            }
+
+        .account-type-icon {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        /* Save button animation */
+        .save-button {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+            .save-button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            }
+
+            .save-button.loading .save-text {
+                visibility: hidden;
+            }
+
+            .save-button.loading .spinner-border {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                margin-top: -8px;
+                margin-left: -8px;
+            }
+
+        /* Animations */
+        @@keyframes fadeIn {
+            from
+        {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        }
+
+        .form-floating {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        /* Improved accessibility */
+        .form-control:focus, .form-select:focus, .btn:focus {
+            box-shadow: 0 0 0 0.25rem rgba(142, 84, 233, 0.25);
+            outline: 0;
+        }
+
+        /* Responsive adjustments */
+        @@media (max-width: 992px) {
+            .col-lg-6
+
+        {
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+        }
+
         }
     </style>
 }
 
 @section Scripts {
     <script>
-        // Profile image preview
-        document.getElementById('ProfileImageUpload').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    document.getElementById('profilePreview').src = event.target.result;
+        document.addEventListener('DOMContentLoaded', function() {
+            // Enable tooltips
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+                new bootstrap.Tooltip(tooltipTriggerEl);
+            });
 
-                    // Add animation effect
-                    const img = document.getElementById('profilePreview');
-                    img.classList.add('animate__animated', 'animate__pulse');
-                    setTimeout(() => {
-                        img.classList.remove('animate__animated', 'animate__pulse');
-                    }, 1000);
-                };
-                reader.readAsDataURL(file);
-            }
-        });
+            // Form validation with inline feedback
+            const form = document.querySelector('.needs-validation');
+            const formInputs = form.querySelectorAll('input, select, textarea');
 
-        // Enable Bootstrap tooltips
-        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl);
-        });
+            // Form progress calculation
+            function updateFormProgress() {
+                const totalFields = formInputs.length;
+                let filledFields = 0;
 
-        // Form validation
-        (function () {
-            'use strict'
-
-            const forms = document.querySelectorAll('.needs-validation')
-
-            Array.from(forms).forEach(form => {
-                form.addEventListener('submit', event => {
-                    if (!form.checkValidity()) {
-                        event.preventDefault()
-                        event.stopPropagation()
+                formInputs.forEach(input => {
+                    if (input.value && input.value.trim() !== '') {
+                        filledFields++;
                     }
+                });
 
-                    form.classList.add('was-validated')
-                }, false)
-            })
-        })()
+                const progressPercentage = Math.round((filledFields / totalFields) * 100);
+                const progressBar = document.getElementById('formProgress');
+
+                // Animate progress bar
+                let currentWidth = parseInt(progressBar.style.width || '0');
+                const targetWidth = progressPercentage;
+
+                const animateProgress = () => {
+                    if (currentWidth < targetWidth) {
+                        currentWidth++;
+                        progressBar.style.width = currentWidth + '%';
+                        progressBar.setAttribute('aria-valuenow', currentWidth);
+                        setTimeout(animateProgress, 10);
+                    } else if (currentWidth > targetWidth) {
+                        currentWidth--;
+                        progressBar.style.width = currentWidth + '%';
+                        progressBar.setAttribute('aria-valuenow', currentWidth);
+                        setTimeout(animateProgress, 10);
+                    }
+                };
+
+                animateProgress();
+            }
+
+            // Initialize progress
+            updateFormProgress();
+
+            // Update progress when inputs change
+            formInputs.forEach(input => {
+                input.addEventListener('input', updateFormProgress);
+                input.addEventListener('change', updateFormProgress);
+
+                // Real-time validation
+                input.addEventListener('blur', function() {
+                    if (this.checkValidity()) {
+                        this.classList.remove('is-invalid');
+                        this.classList.add('is-valid');
+                    } else {
+                        this.classList.remove('is-valid');
+                        this.classList.add('is-invalid');
+                    }
+                });
+            });
+
+            // Profile image preview with enhanced feedback
+            document.getElementById('ProfileImageUpload').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                const statusElement = document.getElementById('imageUploadStatus');
+
+                if (file) {
+                    // Show loading state
+                    statusElement.textContent = 'Uploading...';
+                    statusElement.className = 'text-muted mt-2 small';
+
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        // Preview image
+                        document.getElementById('profilePreview').src = event.target.result;
+
+                        // Add animation effect
+                        const img = document.getElementById('profilePreview');
+                        img.classList.add('animate__animated', 'animate__pulse');
+
+                        // Success message with delay to simulate upload
+                        setTimeout(() => {
+                            statusElement.textContent = 'Image ready to be saved';
+                            statusElement.className = 'text-success mt-2 small';
+
+                            setTimeout(() => {
+                                img.classList.remove('animate__animated', 'animate__pulse');
+                            }, 1000);
+                        }, 800);
+                    };
+
+                    reader.onerror = function() {
+                        statusElement.textContent = 'Error loading image';
+                        statusElement.className = 'text-danger mt-2 small';
+                    };
+
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Form submission with loading state
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    // Find the first invalid field and focus it
+                    const firstInvalid = form.querySelector(':invalid');
+                    if (firstInvalid) {
+                        firstInvalid.focus();
+                    }
+                } else {
+                    // Show loading state on submit button
+                    const saveButton = document.querySelector('.save-button');
+                    const spinner = saveButton.querySelector('.spinner-border');
+
+                    saveButton.classList.add('loading');
+                    spinner.classList.remove('d-none');
+
+                    // We're not preventing default here to allow the form to submit
+                }
+
+                form.classList.add('was-validated');
+            }, false);
+
+            // Field animations on focus
+            formInputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.closest('.form-floating, .input-group')?.classList.add('focused');
+                });
+
+                input.addEventListener('blur', function() {
+                    this.closest('.form-floating, .input-group')?.classList.remove('focused');
+                });
+            });
+        });
     </script>
 }
