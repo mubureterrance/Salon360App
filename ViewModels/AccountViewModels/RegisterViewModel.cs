@@ -38,7 +38,7 @@ namespace Salon360App.ViewModels.AccountViewModels
         [Required]
         public string Address { get; set; }
 
-        [Display(Name = "Profile Image URL")]
+        [Display(Name = "Profile Image")]
         [Url(ErrorMessage = "Please enter a valid URL.")]
         [DataType(DataType.ImageUrl)]
         public string? ProfileImageUrl { get; set; }

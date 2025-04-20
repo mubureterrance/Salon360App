@@ -82,14 +82,14 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <div class="form-floating mb-2">
+                                        <div class="mb-3">
+                                            <label asp-for="ProfileImage" class="form-label">Profile Image
+                                                (Optional)</label>
                                             <input asp-for="ProfileImage" class="form-control" type="file"
                                                 accept="image/*" />
-                                            <label asp-for="ProfileImage">Profile Image</label>
                                             <span asp-validation-for="ProfileImage" class="text-danger"></span>
                                             <small class="form-text text-muted">Maximum file size: 5MB. Allowed formats:
-                                                JPG,
-                                                JPEG, PNG, GIF</small>
+                                                JPG, JPEG, PNG, GIF</small>
                                         </div>
                                     </div>
                                 </div>
@@ -131,10 +131,9 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-floating mb-2">
-                                            <select asp-for="StaffRoleId"
-                                                asp-items="@(new SelectList(Model.AvailableRoles, "StaffRoleId", "Name"))"
+                                            <select asp-for="StaffRoleId" asp-items="Model.AvailableRoles"
                                                 class="form-select">
-                                                <option value="">Select</option>
+                                                <option value="">Select a role</option>
                                             </select>
                                             <label asp-for="StaffRoleId">Staff Role</label>
                                             <span asp-validation-for="StaffRoleId" class="text-danger"></span>

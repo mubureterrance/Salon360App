@@ -1,4 +1,5 @@
-@model IEnumerable<Salon360App.Models.Staff>
+@model IEnumerable<Salon360App.ViewModels.StaffViewModels.StaffIndexViewModel>
+
 
 @{
     ViewData["Title"] = "Staff Management";
@@ -12,5 +13,45 @@
         </a>
     </div>
 
-    // ... existing code ...
-</div> 
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">No staff records found.</div>
+    }
+    else
+    {
+        <table class="table table-striped shadow-sm">
+            <thead class="table-light">
+                <tr>
+                    <th>#</th>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Hire Date</th>
+                    <th>Bio</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var staff in Model)
+                {
+                    <tr>
+                        <td>@staff.StaffId</td>
+                        <td>@staff.FullName</td>
+                        <td>@staff.Email</td>
+                        <td>@staff.RoleName</td>
+                        <td>@staff.HireDate.ToString("yyyy-MM-dd")</td>
+                        <td>@(string.IsNullOrWhiteSpace(staff.Bio) ? "-" : staff.Bio)</td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@staff.StaffId" class="btn btn-sm btn-outline-warning">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@staff.StaffId" class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

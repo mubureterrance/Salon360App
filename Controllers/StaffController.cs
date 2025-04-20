@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Salon360App.Services.Interfaces;
+using Salon360App.ViewModels.StaffViewModels;
 
 namespace Salon360App.Controllers
 {
@@ -14,8 +15,19 @@ namespace Salon360App.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var staff = await _staffService.GetAllAsync();
-            return View(staff);
+            var staffEntities = await _staffService.GetAllAsync();
+
+            var viewModelList = staffEntities.Select(s => new StaffIndexViewModel
+            {
+                StaffId = s.StaffId,
+                FullName = s.User?.Firstname + " " + s.User?.Lastname,
+                Email = s.User?.Email,
+                RoleName = s.StaffRole?.Name,
+                HireDate = s.HireDate,
+                Bio = s.Bio
+            }).ToList();
+
+            return View(viewModelList);
         }
 
         public async Task<IActionResult> Details(int id)
