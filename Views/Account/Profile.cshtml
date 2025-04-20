@@ -1,189 +1,126 @@
 ﻿@model Salon360App.ViewModels.ProfileViewModels.ProfileViewModel
-
 @{
     ViewData["Title"] = "Profile Settings";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-lg-10">
-            <div class="card shadow border-0 rounded-4">
-                <div class="card-header bg-white border-bottom-0 py-4">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h1 class="h3 mb-0 fw-semibold text-gradient">Profile Settings</h1>
-                        <div class="badge bg-light text-dark rounded-pill px-3 py-2 border">
-                            <i class="bi bi-person-badge-fill me-1"></i>
-                            @Model.UserType.ToString()
-                            @if (Model.UserType == Salon360App.Enums.UserType.Customer)
-                            {
-                                <span>• @Model.CustomerTypeName</span>
-                            }
-                            else if (Model.UserType == Salon360App.Enums.UserType.Staff)
-                            {
-                                <span>• @Model.StaffRoleName</span>
-                            }
+        <div class="col-md-8 col-lg-7 col-xl-6">
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                <!-- Consistent header with auth pages -->
+                <div class="card-header bg-gradient-primary text-white text-center py-4 position-relative">
+                    <div class="position-absolute top-0 start-0 w-100 h-100 bg-opacity-10" style="background: url('/images/auth-pattern.png') repeat;"></div>
+                    <div class="position-relative">
+                        <div class="mb-3">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="bg-white rounded-circle p-2 shadow-sm">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" fill="var(--bs-primary)" />
+                            </svg>
                         </div>
+                        <h2 class="h3 mb-0 fw-semibold">Profile Settings</h2>
+                        <p class="small mb-0 opacity-75">Manage your account information</p>
                     </div>
                 </div>
 
-                <div class="card-body p-lg-5">
-                    <form asp-action="UpdateProfile" asp-controller="Account" enctype="multipart/form-data"
-                          method="post" class="needs-validation" novalidate>
+                <div class="card-body p-4 p-md-5">
+                    <form asp-action="UpdateProfile" asp-controller="Account" method="post" enctype="multipart/form-data" autocomplete="off" novalidate>
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4" role="alert"></div>
 
-                        <!-- Progress indicator -->
-                        <div class="progress mb-5 bg-light" style="height: 6px;" role="progressbar"
-                             aria-label="Profile completion" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                            <div id="formProgress" class="progress-bar bg-gradient"></div>
-                        </div>
-
-                        <!-- Profile Picture Section -->
+                        <!-- Profile picture section with consistent styling -->
                         <div class="text-center mb-5">
-                            <div class="profile-picture-container mx-auto position-relative d-inline-block">
-                                <div class="profile-picture-wrapper">
+                            <div class="position-relative d-inline-block">
+                                <div class="rounded-circle overflow-hidden shadow" style="width: 150px; height: 150px;">
                                     <img id="profilePreview" src="@(Model.ProfileImageUrl ?? "/images/default-user.png")"
-                                         class="rounded-circle shadow object-fit-cover" alt="Profile picture">
-                                    <div class="profile-picture-overlay">
-                                        <i class="bi bi-camera-fill fs-4"></i>
-                                    </div>
+                                         class="w-100 h-100 object-fit-cover" alt="Profile picture">
                                 </div>
-                                <label for="ProfileImageUpload" class="btn btn-sm btn-primary rounded-circle position-absolute bottom-0 end-0 mb-1 me-1 profile-upload-btn"
+                                <label for="ProfileImageUpload" class="btn btn-sm btn-primary rounded-circle position-absolute bottom-0 end-0 mb-1 me-1"
                                        data-bs-toggle="tooltip" title="Change photo">
                                     <i class="bi bi-camera-fill"></i>
-                                    <input type="file" id="ProfileImageUpload" name="ProfileImage" accept="image/*" class="d-none"
-                                           aria-label="Upload profile picture">
+                                    <input type="file" id="ProfileImageUpload" name="ProfileImage" accept="image/*" class="d-none">
                                 </label>
                             </div>
-                            <p id="imageUploadStatus" class="text-muted mt-2 small"></p>
+                            <p id="imageUploadStatus" class="text-muted small mt-2"></p>
                         </div>
 
-                        <div class="row">
-                            <!-- Left column -->
-                            <div class="col-lg-6 pe-lg-4">
-                                <!-- Personal Information Section -->
-                                <div class="mb-4 p-4 bg-light bg-opacity-50 rounded-4">
-                                    <h3 class="h5 mb-4 text-primary d-flex align-items-center">
-                                        <i class="bi bi-person-badge me-2"></i>
-                                        Personal Information
-                                    </h3>
-                                    <div class="row g-3">
-                                        <div class="col-md-6">
-                                            <div class="form-floating mb-3">
-                                                <input asp-for="Firstname" class="form-control" id="floatingFirstName" placeholder="First Name" required>
-                                                <label asp-for="Firstname" for="floatingFirstName">First Name</label>
-                                                <div class="invalid-feedback">
-                                                    Please provide your first name.
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-floating mb-3">
-                                                <input asp-for="Lastname" class="form-control" id="floatingLastName" placeholder="Last Name" required>
-                                                <label asp-for="Lastname" for="floatingLastName">Last Name</label>
-                                                <div class="invalid-feedback">
-                                                    Please provide your last name.
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-12">
-                                            <div class="form-floating mb-3">
-                                                <input asp-for="Email" class="form-control readonly-field" id="floatingEmail" placeholder="Email" readonly>
-                                                <label asp-for="Email" for="floatingEmail">Email</label>
-                                                <small class="text-muted d-block mt-2">
-                                                    <i class="bi bi-info-circle me-1"></i>
-                                                    Contact support to change your email
-                                                </small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Right column -->
-                            <div class="col-lg-6 ps-lg-4">
-                                <!-- Additional Information Section -->
-                                <div class="mb-4 p-4 bg-light bg-opacity-50 rounded-4">
-                                    <h3 class="h5 mb-4 text-primary d-flex align-items-center">
-                                        <i class="bi bi-person-lines-fill me-2"></i>
-                                        Additional Information
-                                    </h3>
-                                    <div class="row g-3">
-                                        <div class="col-md-6">
-                                            <label asp-for="DateOfBirth" class="form-label">Date of Birth</label>
-                                            <div class="input-group">
-                                                <span class="input-group-text"><i class="bi bi-calendar3"></i></span>
-                                                <input asp-for="DateOfBirth" type="date" class="form-control">
-                                            </div>
-                                            <span asp-validation-for="DateOfBirth" class="invalid-feedback"></span>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label asp-for="Gender" class="form-label">Gender</label>
-                                            <select asp-for="Gender" class="form-select"
-                                                    asp-items="Html.GetEnumSelectList<Salon360App.Enums.Gender>()">
-                                                <option value="">Select gender</option>
-                                            </select>
-                                            <span asp-validation-for="Gender" class="invalid-feedback"></span>
-                                        </div>
-                                        <div class="col-12">
-                                            <label asp-for="Address" class="form-label">Address</label>
-                                            <div class="input-group">
-                                                <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
-                                                <input asp-for="Address" class="form-control">
-                                            </div>
-                                            <span asp-validation-for="Address" class="invalid-feedback"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Account Type Section -->
-                        <div class="mb-4 p-4 bg-light bg-opacity-50 rounded-4">
-                            <h3 class="h5 mb-4 text-primary d-flex align-items-center">
-                                <i class="bi bi-person-gear me-2"></i>
-                                Account Type
-                            </h3>
-                            <div class="row">
+                        <!-- User type badge - consistent with auth pages -->
+                        <div class="d-flex justify-content-center mb-4">
+                            <div class="badge bg-light text-dark rounded-pill px-3 py-2 border">
+                                <i class="bi bi-person-badge-fill me-1"></i>
+                                @Model.UserType.ToString()
                                 @if (Model.UserType == Salon360App.Enums.UserType.Customer)
                                 {
-                                    <div class="col-md-6">
-                                        <div class="account-type-card p-3 border rounded-3 mb-3">
-                                            <div class="d-flex align-items-center">
-                                                <div class="account-type-icon me-3 bg-primary bg-opacity-10 p-3 rounded-circle text-primary">
-                                                    <i class="bi bi-person"></i>
-                                                </div>
-                                                <div>
-                                                    <label class="form-label mb-0 fw-medium">Customer Type</label>
-                                                    <p class="mb-0">@Model.CustomerTypeName</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <span>• @Model.CustomerTypeName</span>
                                 }
                                 else if (Model.UserType == Salon360App.Enums.UserType.Staff)
                                 {
-                                    <div class="col-md-6">
-                                        <div class="account-type-card p-3 border rounded-3 mb-3">
-                                            <div class="d-flex align-items-center">
-                                                <div class="account-type-icon me-3 bg-info bg-opacity-10 p-3 rounded-circle text-info">
-                                                    <i class="bi bi-scissors"></i>
-                                                </div>
-                                                <div>
-                                                    <label class="form-label mb-0 fw-medium">Staff Role</label>
-                                                    <p class="mb-0">@Model.StaffRoleName</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <span>• @Model.StaffRoleName</span>
                                 }
+                            </div>
+                        </div>
+
+                        <div class="row g-4">
+                            <!-- Personal Information -->
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input asp-for="Firstname" class="form-control rounded-3" placeholder="John" required />
+                                    <label asp-for="Firstname" class="text-muted">First Name</label>
+                                    <span asp-validation-for="Firstname" class="text-danger small mt-1 d-block"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input asp-for="Lastname" class="form-control rounded-3" placeholder="Doe" required />
+                                    <label asp-for="Lastname" class="text-muted">Last Name</label>
+                                    <span asp-validation-for="Lastname" class="text-danger small mt-1 d-block"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input asp-for="Email" class="form-control rounded-3 readonly-field" placeholder="Email" readonly />
+                                    <label asp-for="Email" class="text-muted">Email</label>
+                                    <small class="text-muted d-block mt-2 small">
+                                        <i class="bi bi-info-circle me-1"></i>
+                                        Contact support to change your email
+                                    </small>
+                                </div>
+                            </div>
+
+                            <!-- Additional Information -->
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input asp-for="DateOfBirth" class="form-control rounded-3" type="date" placeholder="Date of Birth" />
+                                    <label asp-for="DateOfBirth" class="text-muted">Date of Birth</label>
+                                    <span asp-validation-for="DateOfBirth" class="text-danger small mt-1 d-block"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <select asp-for="Gender" class="form-select rounded-3" asp-items="Html.GetEnumSelectList<Salon360App.Enums.Gender>()">
+                                        <option value="">Select Gender</option>
+                                    </select>
+                                    <label asp-for="Gender" class="text-muted">Gender</label>
+                                    <span asp-validation-for="Gender" class="text-danger small mt-1 d-block"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input asp-for="Address" class="form-control rounded-3" placeholder="123 Main St" />
+                                    <label asp-for="Address" class="text-muted">Address</label>
+                                    <span asp-validation-for="Address" class="text-danger small mt-1 d-block"></span>
+                                </div>
                             </div>
                         </div>
 
                         <!-- Form Actions -->
                         <div class="d-flex justify-content-between mt-5">
-                            <a asp-action="Index" asp-controller="Home" class="btn btn-outline-secondary btn-lg">
+                            <a asp-action="Index" asp-controller="Home" class="btn btn-outline-secondary rounded-3 px-4">
                                 <i class="bi bi-arrow-left me-1"></i> Cancel
                             </a>
-                            <button type="submit" class="btn btn-primary btn-lg px-4 save-button">
+                            <button type="submit" class="btn btn-primary rounded-3 px-4" id="saveButton">
                                 <span class="save-text"><i class="bi bi-save me-1"></i> Save Changes</span>
                                 <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                             </button>
@@ -197,188 +134,68 @@
 
 @section Styles {
     <style>
-        /* Gradient text */
-        .text-gradient {
-            background: linear-gradient(90deg, #4776E6 0%, #8E54E9 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            color: transparent;
+        /* Consistent with login/register pages */
+        .bg-gradient-primary {
+            background: linear-gradient(135deg, var(--bs-primary) 0%, #4a6cf7 100%);
         }
 
-        /* Gradient backgrounds */
-        .bg-gradient {
-            background: linear-gradient(90deg, #4776E6 0%, #8E54E9 100%);
+        .hover-text-primary:hover {
+            color: var(--bs-primary) !important;
         }
 
-        .card {
-            border-radius: 1rem;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-        }
-
-        /* Form controls */
-        .form-control, .form-select, .form-floating > .form-control {
-            padding: 0.75rem 1rem;
-            border-radius: 0.5rem;
-            border: 1px solid #dee2e6;
-            transition: all 0.2s ease-in-out;
+        /* Form control styling */
+        .form-control, .form-select {
+            transition: all 0.2s ease;
         }
 
             .form-control:focus, .form-select:focus {
-                border-color: #8E54E9;
-                box-shadow: 0 0 0 0.25rem rgba(142, 84, 233, 0.25);
-                transform: translateY(-2px);
+                box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.1);
+                border-color: var(--bs-primary);
             }
 
+        /* Readonly field styling */
         .readonly-field {
             background-color: #f8f9fa;
             opacity: 0.8;
             cursor: not-allowed;
         }
 
-        /* Profile picture */
-        .profile-picture-container {
-            width: 180px;
-            height: 180px;
+        /* Profile image styling */
+        #profilePreview {
             transition: all 0.3s ease;
-        }
-
-        .profile-picture-wrapper {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            border-radius: 50%;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
             border: 3px solid white;
         }
 
-            .profile-picture-wrapper img {
-                width: 100%;
-                height: 100%;
-                transition: all 0.3s ease;
-            }
+        /* Tooltip styling */
+        .tooltip {
+            --bs-tooltip-bg: var(--bs-primary);
+        }
 
-        .profile-picture-overlay {
+        /* Button loading state */
+        #saveButton.loading .save-text {
+            visibility: hidden;
+        }
+
+        #saveButton.loading .spinner-border {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .profile-picture-wrapper:hover .profile-picture-overlay {
-            opacity: 1;
-        }
-
-        .profile-picture-wrapper:hover img {
-            transform: scale(1.05);
-        }
-
-        .profile-upload-btn {
-            width: 45px;
-            height: 45px;
-            line-height: 45px;
-            transition: all 0.3s ease;
-        }
-
-            .profile-upload-btn:hover {
-                transform: scale(1.1);
-            }
-
-        /* Account type cards */
-        .account-type-card {
-            transition: all 0.3s ease;
-            background: white;
-        }
-
-            .account-type-card:hover {
-                transform: translateY(-3px);
-                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
-            }
-
-        .account-type-icon {
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-        }
-
-        /* Save button animation */
-        .save-button {
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-            .save-button:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            }
-
-            .save-button.loading .save-text {
-                visibility: hidden;
-            }
-
-            .save-button.loading .spinner-border {
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                margin-top: -8px;
-                margin-left: -8px;
-            }
-
-        /* Animations */
-        @@keyframes fadeIn {
-            from
-        {
-            opacity: 0;
-            transform: translateY(10px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        }
-
-        .form-floating {
-            animation: fadeIn 0.5s ease forwards;
-        }
-
-        /* Improved accessibility */
-        .form-control:focus, .form-select:focus, .btn:focus {
-            box-shadow: 0 0 0 0.25rem rgba(142, 84, 233, 0.25);
-            outline: 0;
+            top: 50%;
+            left: 50%;
+            margin-top: -8px;
+            margin-left: -8px;
+            display: inline-block !important;
         }
 
         /* Responsive adjustments */
-        @@media (max-width: 992px) {
-            .col-lg-6
-
-        {
-            padding-left: 1rem !important;
-            padding-right: 1rem !important;
-        }
-
+        @@media (max-width: 767.98px) {
+            .card-body {
+                padding: 1.5rem !important;
+            }
         }
     </style>
 }
 
 @section Scripts {
+    <partial name="_ValidationScriptsPartial" />
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Enable tooltips
@@ -387,138 +204,65 @@
                 new bootstrap.Tooltip(tooltipTriggerEl);
             });
 
-            // Form validation with inline feedback
-            const form = document.querySelector('.needs-validation');
-            const formInputs = form.querySelectorAll('input, select, textarea');
-
-            // Form progress calculation
-            function updateFormProgress() {
-                const totalFields = formInputs.length;
-                let filledFields = 0;
-
-                formInputs.forEach(input => {
-                    if (input.value && input.value.trim() !== '') {
-                        filledFields++;
-                    }
-                });
-
-                const progressPercentage = Math.round((filledFields / totalFields) * 100);
-                const progressBar = document.getElementById('formProgress');
-
-                // Animate progress bar
-                let currentWidth = parseInt(progressBar.style.width || '0');
-                const targetWidth = progressPercentage;
-
-                const animateProgress = () => {
-                    if (currentWidth < targetWidth) {
-                        currentWidth++;
-                        progressBar.style.width = currentWidth + '%';
-                        progressBar.setAttribute('aria-valuenow', currentWidth);
-                        setTimeout(animateProgress, 10);
-                    } else if (currentWidth > targetWidth) {
-                        currentWidth--;
-                        progressBar.style.width = currentWidth + '%';
-                        progressBar.setAttribute('aria-valuenow', currentWidth);
-                        setTimeout(animateProgress, 10);
-                    }
-                };
-
-                animateProgress();
-            }
-
-            // Initialize progress
-            updateFormProgress();
-
-            // Update progress when inputs change
-            formInputs.forEach(input => {
-                input.addEventListener('input', updateFormProgress);
-                input.addEventListener('change', updateFormProgress);
-
-                // Real-time validation
-                input.addEventListener('blur', function() {
-                    if (this.checkValidity()) {
-                        this.classList.remove('is-invalid');
-                        this.classList.add('is-valid');
-                    } else {
-                        this.classList.remove('is-valid');
-                        this.classList.add('is-invalid');
-                    }
-                });
-            });
-
-            // Profile image preview with enhanced feedback
-            document.getElementById('ProfileImageUpload').addEventListener('change', function(e) {
+            // Profile image preview
+            document.getElementById('ProfileImageUpload')?.addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 const statusElement = document.getElementById('imageUploadStatus');
 
                 if (file) {
+                    // Validate file type and size
+                    const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+                    const maxSize = 5 * 1024 * 1024; // 5MB
+
+                    if (!validTypes.includes(file.type)) {
+                        statusElement.textContent = 'Please select a valid image (JPEG, PNG, GIF)';
+                        statusElement.className = 'text-danger small mt-2';
+                        return;
+                    }
+
+                    if (file.size > maxSize) {
+                        statusElement.textContent = 'Image must be less than 5MB';
+                        statusElement.className = 'text-danger small mt-2';
+                        return;
+                    }
+
                     // Show loading state
                     statusElement.textContent = 'Uploading...';
-                    statusElement.className = 'text-muted mt-2 small';
+                    statusElement.className = 'text-muted small mt-2';
 
                     const reader = new FileReader();
                     reader.onload = function(event) {
                         // Preview image
                         document.getElementById('profilePreview').src = event.target.result;
 
-                        // Add animation effect
-                        const img = document.getElementById('profilePreview');
-                        img.classList.add('animate__animated', 'animate__pulse');
-
-                        // Success message with delay to simulate upload
+                        // Success message
                         setTimeout(() => {
                             statusElement.textContent = 'Image ready to be saved';
-                            statusElement.className = 'text-success mt-2 small';
-
-                            setTimeout(() => {
-                                img.classList.remove('animate__animated', 'animate__pulse');
-                            }, 1000);
+                            statusElement.className = 'text-success small mt-2';
                         }, 800);
                     };
 
                     reader.onerror = function() {
                         statusElement.textContent = 'Error loading image';
-                        statusElement.className = 'text-danger mt-2 small';
+                        statusElement.className = 'text-danger small mt-2';
                     };
 
                     reader.readAsDataURL(file);
                 }
             });
 
-            // Form submission with loading state
-            form.addEventListener('submit', function(event) {
-                if (!form.checkValidity()) {
-                    event.preventDefault();
-                    event.stopPropagation();
-
-                    // Find the first invalid field and focus it
-                    const firstInvalid = form.querySelector(':invalid');
-                    if (firstInvalid) {
-                        firstInvalid.focus();
-                    }
-                } else {
-                    // Show loading state on submit button
-                    const saveButton = document.querySelector('.save-button');
-                    const spinner = saveButton.querySelector('.spinner-border');
-
-                    saveButton.classList.add('loading');
-                    spinner.classList.remove('d-none');
-
-                    // We're not preventing default here to allow the form to submit
+            // Form submission handling
+            document.querySelector('form')?.addEventListener('submit', function(e) {
+                if (!this.checkValidity()) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return;
                 }
 
-                form.classList.add('was-validated');
-            }, false);
-
-            // Field animations on focus
-            formInputs.forEach(input => {
-                input.addEventListener('focus', function() {
-                    this.closest('.form-floating, .input-group')?.classList.add('focused');
-                });
-
-                input.addEventListener('blur', function() {
-                    this.closest('.form-floating, .input-group')?.classList.remove('focused');
-                });
+                const button = document.getElementById('saveButton');
+                button.disabled = true;
+                button.classList.add('loading');
+                button.querySelector('.spinner-border').classList.remove('d-none');
             });
         });
     </script>

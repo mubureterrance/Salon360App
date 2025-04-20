@@ -4,203 +4,256 @@
 @inject UserManager<User> UserManager
 @model Salon360App.ViewModels.AccountViewModels.RegisterViewModel
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Salon360App</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/Salon360App.styles.css" asp-append-version="true" />
-</head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Salon360App</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+@{
+    ViewData["Title"] = "Register";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
 
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav me-auto">
-                        @if (User.Identity?.IsAuthenticated ?? false)
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Dashboard</a>
-                            </li>
-                            @if (User.IsInRole("Admin"))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-area="" asp-controller="AdminDashboard" asp-action="Index">Admin Panel</a>
-                                </li>
-                            }
-                        }
-                        else
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                            </li>
-                        }
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7 col-xl-6">
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                <!-- Consistent header with login page -->
+                <div class="card-header bg-gradient-primary text-white text-center py-4 position-relative">
+                    <div class="position-absolute top-0 start-0 w-100 h-100 bg-opacity-10" style="background: url('/images/auth-pattern.png') repeat;"></div>
+                    <div class="position-relative">
+                        <div class="mb-3">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="bg-white rounded-circle p-2 shadow-sm">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" fill="var(--bs-primary)" />
+                            </svg>
+                        </div>
+                        <h2 class="h3 mb-0 fw-semibold">Create Your Account</h2>
+                        <p class="small mb-0 opacity-75">Join Salon360 today</p>
+                    </div>
+                </div>
 
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
+                <div class="card-body p-4 p-md-5">
+                    <form asp-action="Register" asp-controller="Account" method="post" enctype="multipart/form-data" autocomplete="off" novalidate>
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4" role="alert"></div>
 
-                    <ul class="navbar-nav">
-                        @if (SignInManager.IsSignedIn(User))
-                        {
-                            <li class="nav-item">
-                                <span class="navbar-text me-2">
-                                    @{
-                                        var currentUser = UserManager.GetUserAsync(User).Result;
-                                        var displayName = Context.User.Claims.FirstOrDefault(c => c.Type == "given_name")?.Value ?? "User";
-                                    }
-                                    Welcome, @displayName
-                                </span>
-                            </li>
-                            <li class="nav-item">
-                                <form method="post" asp-controller="Account" asp-action="Logout">
-                                    <button type="submit" class="btn btn-outline-danger">Logout</button>
-                                </form>
-                            </li>
-                        }
-                        else
-                        {
-                            <li class="nav-item">
-                                <a class="btn btn-outline-primary me-2" asp-area="" asp-controller="Account" asp-action="Login">Login</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="btn btn-outline-success" asp-area="" asp-controller="Account" asp-action="Register">Register</a>
-                            </li>
-                        }
-                    </ul>
+                        <div class="row g-3">
+                            <!-- First Name -->
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input asp-for="Firstname" class="form-control rounded-3" placeholder="John" required />
+                                    <label asp-for="Firstname" class="text-muted">First Name</label>
+                                    <span asp-validation-for="Firstname" class="text-danger small mt-1 d-block"></span>
+                                </div>
+                            </div>
+
+                            <!-- Last Name -->
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input asp-for="Lastname" class="form-control rounded-3" placeholder="Doe" required />
+                                    <label asp-for="Lastname" class="text-muted">Last Name</label>
+                                    <span asp-validation-for="Lastname" class="text-danger small mt-1 d-block"></span>
+                                </div>
+                            </div>
+
+                            <!-- Email -->
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input asp-for="Email" class="form-control rounded-3" placeholder="name@example.com" required />
+                                    <label asp-for="Email" class="text-muted">Email Address</label>
+                                    <span asp-validation-for="Email" class="text-danger small mt-1 d-block"></span>
+                                </div>
+                            </div>
+
+                            <!-- Password -->
+                            <div class="col-md-6">
+                                <div class="form-floating position-relative">
+                                    <input asp-for="Password" class="form-control rounded-3 pe-5" type="password" placeholder="Password" required />
+                                    <label asp-for="Password" class="text-muted">Password</label>
+                                    <button type="button" class="btn btn-link position-absolute end-0 top-50 translate-middle-y p-0 me-3 text-muted toggle-password" aria-label="Show password">
+                                        <i class="bi bi-eye-slash"></i>
+                                    </button>
+                                    <span asp-validation-for="Password" class="text-danger small mt-1 d-block"></span>
+                                </div>
+                            </div>
+
+                            <!-- Confirm Password -->
+                            <div class="col-md-6">
+                                <div class="form-floating position-relative">
+                                    <input asp-for="ConfirmPassword" class="form-control rounded-3 pe-5" type="password" placeholder="Confirm Password" required />
+                                    <label asp-for="ConfirmPassword" class="text-muted">Confirm Password</label>
+                                    <button type="button" class="btn btn-link position-absolute end-0 top-50 translate-middle-y p-0 me-3 text-muted toggle-password" aria-label="Show password">
+                                        <i class="bi bi-eye-slash"></i>
+                                    </button>
+                                    <span asp-validation-for="ConfirmPassword" class="text-danger small mt-1 d-block"></span>
+                                </div>
+                            </div>
+
+                            <!-- Gender -->
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <select asp-for="Gender" class="form-select rounded-3" asp-items="Html.GetEnumSelectList<Salon360App.Enums.Gender>()" required>
+                                        <option value="">Select Gender</option>
+                                    </select>
+                                    <label asp-for="Gender" class="text-muted">Gender</label>
+                                    <span asp-validation-for="Gender" class="text-danger small mt-1 d-block"></span>
+                                </div>
+                            </div>
+
+                            <!-- Date of Birth -->
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input asp-for="DateOfBirth" class="form-control rounded-3" type="date" required />
+                                    <label asp-for="DateOfBirth" class="text-muted">Date of Birth</label>
+                                    <span asp-validation-for="DateOfBirth" class="text-danger small mt-1 d-block"></span>
+                                </div>
+                            </div>
+
+                            <!-- Address -->
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input asp-for="Address" class="form-control rounded-3" placeholder="123 Main St" required />
+                                    <label asp-for="Address" class="text-muted">Address</label>
+                                    <span asp-validation-for="Address" class="text-danger small mt-1 d-block"></span>
+                                </div>
+                            </div>
+
+                            <!-- Profile Image -->
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <label for="ProfileImageUpload" class="form-label small text-muted">Profile Image (Optional)</label>
+                                    <input type="file" class="form-control rounded-3" id="ProfileImageUpload" name="ProfileImage" accept="image/*" />
+                                </div>
+
+                                <!-- Profile image preview -->
+                                <div class="text-center mt-2 mb-4">
+                                    <img id="profilePreview" src="/images/default-user.png" class="rounded-circle shadow object-fit-cover" width="120" height="120" alt="Preview" style="border: 3px solid var(--bs-primary);" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit button -->
+                        <div class="d-grid gap-2 mt-2">
+                            <button type="submit" class="btn btn-primary btn-lg rounded-3 fw-semibold py-3" id="registerButton">
+                                <span>Create Account</span>
+                                <i class="bi bi-person-plus ms-2"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Footer with login link -->
+                <div class="card-footer bg-transparent p-3 text-center border-0">
+                    <p class="mb-0 small">
+                        Already have an account?
+                        <a asp-controller="Account" asp-action="Login" class="fw-semibold text-decoration-none text-primary">Sign in</a>
+                    </p>
                 </div>
             </div>
-        </nav>
-    </header>
 
-    <div class="container">
-        <main role="main" class="pb-3">
-            <h2 class="mb-4">Customer Registration</h2>
-            <form asp-action="Register" asp-controller="Account" enctype="multipart/form-data" method="post">
-                <div class="mb-3">
-                    <label asp-for="Firstname" class="form-label"></label>
-                    <input asp-for="Firstname" class="form-control" />
-                    <span asp-validation-for="Firstname" class="text-danger"></span>
-                </div>
-                <div class="mb-3">
-                    <label asp-for="Lastname" class="form-label"></label>
-                    <input asp-for="Lastname" class="form-control" />
-                    <span asp-validation-for="Lastname" class="text-danger"></span>
-                </div>
-                <div class="mb-3">
-                    <label asp-for="Email" class="form-label"></label>
-                    <input asp-for="Email" class="form-control" />
-                    <span asp-validation-for="Email" class="text-danger"></span>
-                </div>
-                <div class="mb-3">
-                    <label asp-for="Password" class="form-label"></label>
-                    <input asp-for="Password" class="form-control" type="password" />
-                    <span asp-validation-for="Password" class="text-danger"></span>
-                </div>
-                <div class="mb-3">
-                    <label asp-for="ConfirmPassword" class="form-label"></label>
-                    <input asp-for="ConfirmPassword" class="form-control" type="password" />
-                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-                </div>
-                <div class="mb-3">
-                    <label asp-for="Gender" class="form-label"></label>
-                    <select asp-for="Gender" class="form-select" asp-items="Html.GetEnumSelectList<Salon360App.Enums.Gender>()"></select>
-                    <span asp-validation-for="Gender" class="text-danger"></span>
-                </div>
-                <div class="mb-3">
-                    <label asp-for="DateOfBirth" class="form-label"></label>
-                    <input asp-for="DateOfBirth" class="form-control" type="date" />
-                    <span asp-validation-for="DateOfBirth" class="text-danger"></span>
-                </div>
-                <div class="mb-3">
-                    <label asp-for="Address" class="form-label"></label>
-                    <input asp-for="Address" class="form-control" />
-                    <span asp-validation-for="Address" class="text-danger"></span>
-                </div>
-                <div class="mb-3">
-                    <label for="ProfileImageUpload" class="form-label">Profile Image</label>
-                    <input type="file" class="form-control" id="ProfileImageUpload" name="ProfileImage" accept="image/*" />
-                </div>
-
-                <!-- Profile image preview -->
-                <div class="text-center mt-3 mb-4">
-                    <img id="profilePreview" src="/images/default-user.png" class="rounded-circle shadow" width="120" height="120" alt="Preview" />
-                </div>
-
-                <button type="submit" class="btn btn-primary">Register</button>
-            </form>
-        </main>
-    </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - Salon360App - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <!-- Legal links with consistent styling -->
+            <div class="text-center mt-4">
+                <p class="small text-muted">
+                    By registering, you agree to our
+                    <a asp-controller="Home" asp-action="Terms" class="text-decoration-none text-muted hover-text-primary">Terms</a> and
+                    <a asp-controller="Home" asp-action="Privacy" class="text-decoration-none text-muted hover-text-primary">Privacy Policy</a>
+                </p>
+            </div>
         </div>
-    </footer>
-
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-
-    <!-- Toast Notifications -->
-    <div aria-live="polite" aria-atomic="true" class="position-fixed top-0 end-0 p-3" style="z-index: 1080;">
-        @if (TempData["Success"] != null)
-        {
-            <div class="toast fade align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
-                <div class="d-flex">
-                    <div class="toast-body">
-                        <i class="bi bi-check-circle me-2"></i>@TempData["Success"]
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                </div>
-            </div>
-        }
-
-        @if (TempData["Error"] != null)
-        {
-            <div class="toast fade align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
-                <div class="d-flex">
-                    <div class="toast-body">
-                        <i class="bi bi-exclamation-triangle me-2"></i>@TempData["Error"]
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                </div>
-            </div>
-        }
     </div>
-</body>
-</html>
+</div>
+
+@section Styles {
+    <style>
+        /* Consistent with login page styles */
+        .bg-gradient-primary {
+            background: linear-gradient(135deg, var(--bs-primary) 0%, #4a6cf7 100%);
+        }
+
+        .hover-text-primary:hover {
+            color: var(--bs-primary) !important;
+        }
+
+        /* Form control styling */
+        .form-control, .form-select {
+            transition: all 0.2s ease;
+        }
+
+            .form-control:focus, .form-select:focus {
+                box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.1);
+                border-color: var(--bs-primary);
+            }
+
+        /* Password toggle button styling */
+        .toggle-password {
+            color: var(--bs-secondary);
+            transition: transform 0.2s ease;
+        }
+
+            .toggle-password:hover {
+                color: var(--bs-primary);
+                transform: scale(1.1);
+            }
+
+        /* Profile image preview styling */
+        #profilePreview {
+            transition: all 0.3s ease;
+        }
+
+            #profilePreview:hover {
+                transform: scale(1.05);
+            }
+    </style>
+}
 
 @section Scripts {
+    <partial name="_ValidationScriptsPartial" />
     <script>
-        const toastElList = [].slice.call(document.querySelectorAll('.toast'));
-        toastElList.forEach(function (toastEl) {
-            const toast = new bootstrap.Toast(toastEl, { delay: 3500 });
-            toastEl.classList.add("show");
-            toast.show();
+        // Password toggle functionality
+        document.querySelectorAll('.toggle-password').forEach(button => {
+            button.addEventListener('click', function (e) {
+                e.preventDefault();
+                const input = this.closest('.form-floating').querySelector('input');
+                const icon = this.querySelector('i');
+
+                const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+                input.setAttribute('type', type);
+
+                // Toggle the eye icon with animation
+                icon.classList.toggle('bi-eye');
+                icon.classList.toggle('bi-eye-slash');
+
+                // Add slight animation
+                icon.style.transform = 'scale(1.2)';
+                setTimeout(() => {
+                    icon.style.transform = 'scale(1)';
+                }, 200);
+            });
         });
 
-        const fileInput = document.getElementById("ProfileImageUpload");
-        if (fileInput) {
-            fileInput.addEventListener("change", function () {
-                const file = this.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function (e) {
-                        document.getElementById("profilePreview").src = e.target.result;
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-        }
+        // Profile image preview
+        document.getElementById('ProfileImageUpload')?.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('profilePreview');
+                    preview.src = e.target.result;
+                    preview.classList.add('animate__animated', 'animate__pulse');
+                    setTimeout(() => {
+                        preview.classList.remove('animate__animated', 'animate__pulse');
+                    }, 1000);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Form submission handling
+        document.querySelector('form')?.addEventListener('submit', function(e) {
+            if (!this.checkValidity()) {
+                return;
+            }
+
+            const button = document.getElementById('registerButton');
+            button.disabled = true;
+            button.innerHTML = `
+                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                <span>Creating account...</span>
+            `;
+        });
     </script>
 }
