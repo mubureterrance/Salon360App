@@ -52,6 +52,25 @@ namespace Salon360App.Models
         [DataType(DataType.Date)]
         public DateTime RegisteredAt { get; set; } = DateTime.UtcNow;
 
+        [DataType(DataType.DateTime)]
+        public DateTime? LastLoginDate { get; set; }
+
+        [StringLength(50)]
+        public string? LastLoginIP { get; set; }
+
+        public int FailedLoginAttempts { get; set; }
+
+        [DataType(DataType.DateTime)]
+        public DateTime? LockoutEndDate { get; set; }
+
+        [Required]
+        public bool TwoFactorEnabled { get; set; } = false;
+
+        [StringLength(100)]
+        public string? TwoFactorSecret { get; set; }
+
+        [DataType(DataType.DateTime)]
+        public DateTime? LastPasswordChangeDate { get; set; }
 
         //TODO: public virtual ICollection<LoginLog> LoginLogs { get; set; } = new List<LoginLog>(); 
         public virtual ICollection<BaseEntry> CreatedEntries { get; set; } = new List<BaseEntry>();

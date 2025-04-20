@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Salon360App.Models;
+using System.Linq.Expressions;
 
 namespace Salon360App.Repositories.Interfaces
 {
@@ -8,6 +9,7 @@ namespace Salon360App.Repositories.Interfaces
         Task<User> GetByEmailAsync(string email);
         Task<User> GetWithProfileAsync(int id);
         Task<User> GetByUsernameAsync(string username); // Optional bonus
+        Task<IEnumerable<User>> FindAsync(Expression<Func<User, bool>> predicate);
     }
 
     public class UserRepository : Repository<User>, IUserRepository
@@ -37,6 +39,14 @@ namespace Salon360App.Repositories.Interfaces
                 .Include(u => u.StaffProfile)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(u => u.Id == id);
+        }
+
+        public async Task<IEnumerable<User>> FindAsync(Expression<Func<User, bool>> predicate)
+        {
+            return await _dbSet
+                .Where(predicate)
+                .AsNoTracking()
+                .ToListAsync();
         }
     }
 }

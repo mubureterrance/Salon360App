@@ -1,0 +1,55 @@
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4 text-primary">Admin Dashboard</h2>
+
+    <div class="row g-4">
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="card-title">Users</h5>
+                    <p class="card-text text-muted">Manage all users</p>
+                    <a asp-controller="User" asp-action="Index" class="btn btn-outline-primary w-100">View Users</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="card-title">Staff</h5>
+                    <p class="card-text text-muted">View and manage staff profiles</p>
+                    <a asp-controller="Staff" asp-action="Index" class="btn btn-outline-secondary w-100">Manage Staff</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="card-title">Customer Types</h5>
+                    <p class="card-text text-muted">Edit client categories</p>
+                    <a asp-controller="CustomerType" asp-action="Index" class="btn btn-outline-success w-100">Edit Types</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="card-title">Reports</h5>
+                    <p class="card-text text-muted">View analytics and reports</p>
+                    <a href="#" class="btn btn-outline-info w-100">Reports</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-5">
+        <div class="alert alert-info shadow-sm">
+            <strong>Heads up!</strong> You’re logged in as <span class="fw-bold">@User.Identity?.Name</span>. Don’t forget to check logs and user requests regularly!
+        </div>
+    </div>
+</div>

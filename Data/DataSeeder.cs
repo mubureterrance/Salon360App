@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using Salon360App.Enums;
 using Salon360App.Models;
+using System.Data;
+using System.Security.Claims;
 
 namespace Salon360App.Data
 {
@@ -48,17 +50,27 @@ namespace Salon360App.Data
             {
                 var types = Enum.GetValues(typeof(DefaultCustomerType))
                     .Cast<DefaultCustomerType>()
-                    .Select(e => new CustomerType
+                    .Select(type => new CustomerType
                     {
-                        CustomerTypeId = (int)e,
-                        Name = e.ToString(),
-                        Description = $"{e} customer type"
-                    });
+                        Code = type.ToString(),
+                        Name = type.GetType().GetMember(type.ToString())[0]
+                            .GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.DisplayAttribute), false)
+                            .Cast<System.ComponentModel.DataAnnotations.DisplayAttribute>()
+                            .FirstOrDefault()?.Name ?? type.ToString(),
+                        Description = $"{type} customer type"
+                    })
+                    .ToList(); // Evaluate immediately so we can log below
+
+                foreach (var type in types)
+                {
+                    Console.WriteLine($"✔ Seeded CustomerType: {type.Name}");
+                }
 
                 await _context.CustomerTypes.AddRangeAsync(types);
                 await _context.SaveChangesAsync();
             }
         }
+
 
         private async Task SeedStaffRolesAsync()
         {
@@ -68,16 +80,21 @@ namespace Salon360App.Data
                     .Cast<DefaultStaffRole>()
                     .Select(role => new StaffRole
                     {
-                        StaffRoleId = (int)role,
                         Code = role.ToString(),
                         Name = role.GetType().GetMember(role.ToString())[0]
-                                .GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.DisplayAttribute), false)
-                                .Cast<System.ComponentModel.DataAnnotations.DisplayAttribute>()
-                                .FirstOrDefault()?.Name ?? role.ToString(),
+                            .GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.DisplayAttribute), false)
+                            .Cast<System.ComponentModel.DataAnnotations.DisplayAttribute>()
+                            .FirstOrDefault()?.Name ?? role.ToString(),
                         Description = $"{role} seeded from enum"
-                    });
+                    })
+                    .ToList(); // Evaluate immediately so we can log below
 
-                await _context.StaffRoles.AddRangeAsync(roles);
+                foreach (var role in roles)
+                {
+                    Console.WriteLine($"✔ Seeded StaffRole: {role.Name}");
+                }
+
+                    await _context.StaffRoles.AddRangeAsync(roles);
                 await _context.SaveChangesAsync();
             }
         }
@@ -99,13 +116,20 @@ namespace Salon360App.Data
                 Lastname = "Administrator",
                 UserType = UserType.Admin,
                 Gender = Gender.PreferNotToSay,
-                RegisteredAt = DateTime.UtcNow
+                RegisteredAt = DateTime.UtcNow,
+                Address = "System HQ" 
             };
 
             var result = await _userManager.CreateAsync(adminUser, adminPassword);
             if (result.Succeeded)
             {
+                // Assign role
                 await _userManager.AddToRoleAsync(adminUser, UserType.Admin.ToString());
+
+                // 🔥 Add custom claims
+                await _userManager.AddClaimAsync(adminUser, new Claim("given_name", adminUser.Firstname));
+                await _userManager.AddClaimAsync(adminUser, new Claim("family_name", adminUser.Lastname));
+                await _userManager.AddClaimAsync(adminUser, new Claim("role", UserType.Admin.ToString()));
             }
         }
     }

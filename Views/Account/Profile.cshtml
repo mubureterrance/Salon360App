@@ -1,0 +1,198 @@
+﻿@model Salon360App.ViewModels.ProfileViewModels.ProfileViewModel
+
+@{
+    ViewData["Title"] = "Profile Settings";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white border-bottom-0 py-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h1 class="h4 mb-0">Profile Settings</h1>
+                        <div class="badge bg-light text-dark">
+                            @Model.UserType.ToString()
+                            @if (Model.UserType == Salon360App.Enums.UserType.Customer)
+                            {
+                                <span>• @Model.CustomerTypeName</span>
+                            }
+                            else if (Model.UserType == Salon360App.Enums.UserType.Staff)
+                            {
+                                <span>• @Model.StaffRoleName</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <form asp-action="UpdateProfile" asp-controller="Account" enctype="multipart/form-data" method="post" class="needs-validation" novalidate>
+                        <!-- Profile Picture Section -->
+                        <div class="text-center mb-5">
+                            <div class="position-relative d-inline-block">
+                                <img id="profilePreview" src="@(Model.ProfileImageUrl ?? "/images/default-user.png")"
+                                     class="rounded-circle shadow object-fit-cover" width="150" height="150"
+                                     alt="Profile picture" style="border: 3px solid #f8f9fa;">
+                                <label for="ProfileImageUpload" class="btn btn-sm btn-primary rounded-circle position-absolute bottom-0 end-0 mb-1 me-1"
+                                       style="width: 40px; height: 40px; line-height: 40px;"
+                                       data-bs-toggle="tooltip" title="Change photo">
+                                    <i class="bi bi-camera-fill"></i>
+                                    <input type="file" id="ProfileImageUpload" name="ProfileImage" accept="image/*" class="d-none">
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Personal Information Section -->
+                        <div class="mb-4">
+                            <h3 class="h5 mb-3 text-primary">
+                                <i class="bi bi-person-badge me-2"></i>Personal Information
+                            </h3>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label asp-for="Firstname" class="form-label">First Name</label>
+                                    <input asp-for="Firstname" class="form-control" required>
+                                    <span asp-validation-for="Firstname" class="invalid-feedback"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="Lastname" class="form-label">Last Name</label>
+                                    <input asp-for="Lastname" class="form-control" required>
+                                    <span asp-validation-for="Lastname" class="invalid-feedback"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="Email" class="form-label">Email</label>
+                                    <input asp-for="Email" class="form-control" readonly>
+                                    <small class="text-muted">Contact support to change your email</small>
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="DateOfBirth" class="form-label">Date of Birth</label>
+                                    <input asp-for="DateOfBirth" type="date" class="form-control">
+                                    <span asp-validation-for="DateOfBirth" class="invalid-feedback"></span>
+                                </div>
+                                <div class="col-12">
+                                    <label asp-for="Address" class="form-label">Address</label>
+                                    <input asp-for="Address" class="form-control">
+                                    <span asp-validation-for="Address" class="invalid-feedback"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="Gender" class="form-label">Gender</label>
+                                    <select asp-for="Gender" class="form-select" asp-items="Html.GetEnumSelectList<Salon360App.Enums.Gender>()">
+                                        <option value="">Select gender</option>
+                                    </select>
+                                    <span asp-validation-for="Gender" class="invalid-feedback"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Account Type Section -->
+                        <div class="mb-4">
+                            <h3 class="h5 mb-3 text-primary">
+                                <i class="bi bi-person-gear me-2"></i>Account Type
+                            </h3>
+                            <div class="row g-3">
+                                @if (Model.UserType == Salon360App.Enums.UserType.Customer)
+                                {
+                                    <div class="col-md-6">
+                                        <label class="form-label">Customer Type</label>
+                                        <input class="form-control" value="@Model.CustomerTypeName" readonly>
+                                    </div>
+                                }
+                                else if (Model.UserType == Salon360App.Enums.UserType.Staff)
+                                {
+                                    <div class="col-md-6">
+                                        <label class="form-label">Staff Role</label>
+                                        <input class="form-control" value="@Model.StaffRoleName" readonly>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="d-flex justify-content-between mt-5">
+                            <a asp-action="Index" asp-controller="Home" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-1"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="bi bi-save me-1"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .card {
+            border-radius: 0.75rem;
+            overflow: hidden;
+        }
+
+        .form-control, .form-select {
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            border: 1px solid #dee2e6;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #86b7fe;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+
+        .invalid-feedback {
+            font-size: 0.85rem;
+        }
+
+        .object-fit-cover {
+            object-fit: cover;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        // Profile image preview
+        document.getElementById('ProfileImageUpload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    document.getElementById('profilePreview').src = event.target.result;
+
+                    // Add animation effect
+                    const img = document.getElementById('profilePreview');
+                    img.classList.add('animate__animated', 'animate__pulse');
+                    setTimeout(() => {
+                        img.classList.remove('animate__animated', 'animate__pulse');
+                    }, 1000);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Enable Bootstrap tooltips
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+
+        // Form validation
+        (function () {
+            'use strict'
+
+            const forms = document.querySelectorAll('.needs-validation')
+
+            Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        })()
+    </script>
+}

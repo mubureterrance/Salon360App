@@ -15,7 +15,18 @@ namespace Salon360App.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            // Example redirect logic based on roles or UserType
+            if (User.IsInRole("Admin"))
+                return RedirectToAction("Index", "AdminDashboard");
+            if (User.IsInRole("Staff"))
+                return RedirectToAction("Index", "StaffDashboard");
+
+            return RedirectToAction("Index", "CustomerDashboard");
         }
 
         public IActionResult Privacy()

@@ -1,4 +1,5 @@
 ﻿using Salon360App.Data;
+using Salon360App.Repositories;
 using Salon360App.Repositories.Interfaces;
 
 namespace Salon360App.UnitOfWork
@@ -10,6 +11,7 @@ namespace Salon360App.UnitOfWork
         ICustomerRepository Customers { get; }
         ICustomerTypeRepository CustomerTypes { get; }
         IStaffRoleRepository StaffRoles { get; }
+        //IAccountRepository AccountRepository { get; }
 
         Task<int> CompleteAsync();
     }
@@ -22,6 +24,7 @@ namespace Salon360App.UnitOfWork
         public ICustomerRepository Customers { get; }
         public ICustomerTypeRepository CustomerTypes { get; }
         public IStaffRoleRepository StaffRoles { get; }
+        //public IAccountRepository AccountRepository { get; }
 
         public UnitOfWork(SalonDbContext context)
         {
@@ -31,6 +34,7 @@ namespace Salon360App.UnitOfWork
             Customers = new CustomerRepository(_context);
             CustomerTypes = new CustomerTypeRepository(_context);
             StaffRoles = new StaffRoleRepository(_context);
+            //AccountRepository = new AccountRepository(_context);
         }
 
         public async Task<int> CompleteAsync() => await _context.SaveChangesAsync();
