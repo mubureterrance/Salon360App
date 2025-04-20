@@ -6,83 +6,170 @@
 
 <div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5">
-            <div class="card shadow-lg border-0 rounded-4">
-                <div class="card-header bg-gradient text-white text-center py-3" style="background-color: var(--bs-primary);">
-                    <h2 class="h4 mb-0">Welcome to Salon360</h2>
+        <div class="col-md-8 col-lg-6 col-xl-5">
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                <!-- Modern gradient header with logo placeholder -->
+                <div class="card-header bg-gradient-primary text-white text-center py-4 position-relative">
+                    <div class="position-absolute top-0 start-0 w-100 h-100 bg-opacity-10" style="background: url('/images/auth-pattern.png') repeat;"></div>
+                    <div class="position-relative">
+                        <div class="mb-3">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="bg-white rounded-circle p-2 shadow-sm">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" fill="var(--bs-primary)" />
+                            </svg>
+                        </div>
+                        <h2 class="h3 mb-0 fw-semibold">Welcome Back</h2>
+                        <p class="small mb-0 opacity-75">Sign in to your Salon360 account</p>
+                    </div>
                 </div>
-                <div class="card-body p-4">
-                    <form asp-action="Login" asp-controller="Account" method="post" id="loginForm" autocomplete="off">
-                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
 
+                <div class="card-body p-4 p-md-5">
+                    <form asp-action="Login" asp-controller="Account" method="post" id="loginForm" autocomplete="off" novalidate>
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4" role="alert"></div>
+
+                        <!-- Email field with modern floating label -->
                         <div class="form-floating mb-3">
-                            <input asp-for="Email" class="form-control" placeholder="name@example.com" autocomplete="email" required />
-                            <label asp-for="Email">Email address</label>
-                            <span asp-validation-for="Email" class="text-danger"></span>
+                            <input asp-for="Email" class="form-control rounded-3" placeholder="name@example.com" autocomplete="email" required />
+                            <label asp-for="Email" class="text-muted">Email address</label>
+                            <span asp-validation-for="Email" class="text-danger small mt-1 d-block"></span>
                         </div>
 
-                        <div class="form-floating mb-3">
-                            <input asp-for="Password" class="form-control" type="password"  autocomplete="current-password" required />
-                            <label asp-for="Password">Password</label>
-                            <div class="password-toggle position-absolute end-0 top-50 translate-middle-y me-3">
-                                <i class="bi bi-eye-slash" id="togglePassword" role="button" aria-label="Show password"></i>
-                            </div>
-                            <span asp-validation-for="Password" class="text-danger"></span>
+                        <!-- Password field with toggle and improved styling -->
+                        <div class="form-floating mb-3 position-relative">
+                            <input asp-for="Password" class="form-control rounded-3 pe-5" type="password" placeholder="Password" autocomplete="current-password" required />
+                            <label asp-for="Password" class="text-muted">Password</label>
+                            <button type="button" class="btn btn-link position-absolute end-0 top-50 translate-middle-y p-0 me-3 text-muted" id="togglePassword" aria-label="Show password">
+                                <i class="bi bi-eye-slash"></i>
+                            </button>
+                            <span asp-validation-for="Password" class="text-danger small mt-1 d-block"></span>
                         </div>
 
+                        <!-- Remember me and forgot password -->
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <div class="form-check">
-                                <input asp-for="RememberMe" class="form-check-input" type="checkbox" />
-                                <label asp-for="RememberMe" class="form-check-label">Remember me</label>
+                                <input asp-for="RememberMe" class="form-check-input" type="checkbox" id="rememberMe" />
+                                <label asp-for="RememberMe" class="form-check-label small" for="rememberMe">Remember me</label>
                             </div>
-                            <a asp-controller="Account" asp-action="ForgotPassword" class="text-decoration-none small">Forgot password?</a>
+                            <a asp-controller="Account" asp-action="ForgotPassword" class="small text-decoration-none text-primary">Forgot password?</a>
                         </div>
 
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary py-2 fw-bold" id="loginButton">
+                        <!-- Submit button with loading state -->
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-primary btn-lg rounded-3 fw-semibold py-3" id="loginButton">
                                 <span>Sign In</span>
-                                <i class="bi bi-box-arrow-in-right ms-2"></i>
+                                <i class="bi bi-arrow-right-short ms-1"></i>
+                            </button>
+                        </div>
+
+                        <!-- Social login options (optional) -->
+                        <div class="text-center mb-4 position-relative">
+                            <span class="bg-white px-3 position-relative small text-muted">or continue with</span>
+                            <hr class="position-absolute top-50 start-0 end-0">
+                        </div>
+                        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-4">
+                            <button type="button" class="btn btn-outline-secondary rounded-3 flex-grow-1">
+                                <i class="bi bi-google me-2"></i> Google
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary rounded-3 flex-grow-1">
+                                <i class="bi bi-facebook me-2"></i> Facebook
                             </button>
                         </div>
                     </form>
                 </div>
-                <div class="card-footer bg-light p-3 text-center">
-                    <p class="mb-0">
+
+                <!-- Footer with sign up link -->
+                <div class="card-footer bg-transparent p-3 text-center border-0">
+                    <p class="mb-0 small">
                         Don't have an account?
-                        <a asp-controller="Account" asp-action="Register" class="fw-bold text-decoration-none">Sign up</a>
+                        <a asp-controller="Account" asp-action="Register" class="fw-semibold text-decoration-none text-primary">Create one</a>
                     </p>
                 </div>
             </div>
-            <div class="text-center mt-3">
+
+            <!-- Legal links with subtle styling -->
+            <div class="text-center mt-4">
                 <p class="small text-muted">
                     By signing in, you agree to our
-                    <a asp-controller="Home" asp-action="Privacy" class="text-decoration-none">Privacy Policy</a> and
-                    <a asp-controller="Home" asp-action="Terms" class="text-decoration-none">Terms of Service</a>
+                    <a asp-controller="Home" asp-action="Terms" class="text-decoration-none text-muted hover-text-primary">Terms</a> and
+                    <a asp-controller="Home" asp-action="Privacy" class="text-decoration-none text-muted hover-text-primary">Privacy Policy</a>
                 </p>
             </div>
         </div>
     </div>
 </div>
 
+@section Styles {
+    <style>
+        .bg-gradient-primary {
+            background: linear-gradient(135deg, var(--bs-primary) 0%, #4a6cf7 100%);
+        }
+
+        .hover-text-primary:hover {
+            color: var(--bs-primary) !important;
+        }
+
+        /* Smooth transitions for interactive elements */
+        .btn, .form-control, .form-check-input {
+            transition: all 0.2s ease;
+        }
+
+            .form-control:focus {
+                box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.1);
+                border-color: var(--bs-primary);
+            }
+
+        /* Password toggle button styling */
+        #togglePassword {
+            color: var(--bs-secondary);
+            transition: transform 0.2s ease;
+        }
+
+            #togglePassword:hover {
+                color: var(--bs-primary);
+                transform: scale(1.1);
+            }
+    </style>
+}
+
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        // Toggle password visibility
-        document.getElementById('togglePassword')?.addEventListener('click', function () {
+        // Enhanced password toggle
+        document.getElementById('togglePassword')?.addEventListener('click', function (e) {
+            e.preventDefault();
             const passwordInput = document.getElementById('Password');
+            const icon = this.querySelector('i');
+
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordInput.setAttribute('type', type);
 
-            // Toggle the eye icon
-            this.classList.toggle('bi-eye');
-            this.classList.toggle('bi-eye-slash');
+            // Toggle the eye icon with animation
+            icon.classList.toggle('bi-eye');
+            icon.classList.toggle('bi-eye-slash');
+
+            // Add slight animation
+            icon.style.transform = 'scale(1.2)';
+            setTimeout(() => {
+                icon.style.transform = 'scale(1)';
+            }, 200);
         });
 
-        // Form submission handling with button state
-        document.getElementById('loginForm')?.addEventListener('submit', function() {
+        // Enhanced form submission handling
+        document.getElementById('loginForm')?.addEventListener('submit', function(e) {
+            if (!this.checkValidity()) {
+                return;
+            }
+
             const button = document.getElementById('loginButton');
             button.disabled = true;
-            button.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Signing in...';
+            button.innerHTML = `
+                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                <span>Signing in...</span>
+            `;
+
+            // Add slight delay to allow animation to be visible
+            setTimeout(() => {
+                this.submit();
+            }, 400);
         });
     </script>
 }
